@@ -13,9 +13,9 @@ class EntityType(Enum):
 class MethodType(Enum):
     DELETE = "delete"
     UPDATE = "update"
-    GET_LIST = "get_list"
-    GET_BY_ID = "get_by_id"
-    GET_FIELDS = "get_fields"
+    # GET_LIST = "get_list"
+    # GET_BY_ID = "get_by_id"
+    # GET_FIELDS = "get_fields"
 
 
 
@@ -26,7 +26,7 @@ class Webhook:
     pattern: str = r'^https://[a-zA-Z0-9-]+\.bitrix24\.[a-z]{2,}/rest/\d+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/?$'
 
 
-    def validate(self):
+    def validate(self) -> bool:
         validate = re.fullmatch(pattern=self.pattern, string=self.url)
         if type(validate) == re.Match:
             self.is_valid = True
@@ -39,7 +39,7 @@ class ReportFile:
     created: bool = False
 
 
-    def existing_path(self):
+    def existing_path(self) -> bool:
         path = Path(self.path).exists()
         if path:
             self.created = True
@@ -47,10 +47,10 @@ class ReportFile:
 
 
 
-if __name__ == "__main__":
-    # test1 = Webhook(url='https://loh.bitrix24.ru/rest/1/adfad/asdfdasf/')
-    # test1 = Webhook(url='https://loh.bitrirest/1/adfadfadsf/asdfdasf')
-    # print(test1._validate())
+# if __name__ == "__main__":
+#     # test1 = Webhook(url='https://loh.bitrix24.ru/rest/1/adfad/asdfdasf/')
+#     # test1 = Webhook(url='https://loh.bitrirest/1/adfadfadsf/asdfdasf')
+#     # print(test1._validate())
 
-    test2 = ReportFile(path=r'C:\Users\alexa\OneDrive\Рабочий стол\crmka\asf')
-    print(test2.existing_path())
+#     test2 = ReportFile(path=r'C:\Users\alexa\OneDrive\Рабочий стол\crmka\asf')
+#     print(test2.existing_path())

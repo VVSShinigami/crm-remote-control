@@ -1,6 +1,15 @@
-from core.model import Webhook
+from core.entities import Webhook, ReportFile
 from typing import Protocol
 
-class WebhookPort(Protocol):
-    def status(self, webhook: Webhook):
-        pass
+
+class WebhookHandler(Protocol):
+    def save(self, webhook: Webhook) -> bool: ...
+    def delete(self, webhook: Webhook) -> None: ...
+    def load_all(self) -> list: ...
+
+
+class FileHandler(Protocol):
+    def save(self, file: ReportFile) -> bool: ...
+    def delete(self,file: ReportFile) -> None: ...
+    def get_all(self) -> list: ...
+
