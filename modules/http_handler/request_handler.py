@@ -21,8 +21,7 @@ class RequestHandler:
         while counter < 50:
             for num, entity_id in enumerate(self.id_array):
                 commands[f"uniqe_{num}"] = f"crm.{self.entity}.{self.method}?id={entity_id}"
-            counter += 1
-            print(counter)
+
 
         response = requests.post(url=f"{self.webhook}/batch", json={
             "cmd": commands,

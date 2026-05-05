@@ -10,6 +10,7 @@ class EntityType(Enum):
     CONTACT = "contact"
     COMPANY = "company"
 
+
 class MethodType(Enum):
     DELETE = "delete"
     UPDATE = "update"
@@ -46,11 +47,19 @@ class ReportFile:
         return self.created
 
 
+@dataclass
+class BatchRequest:
+    webhook: Webhook
+    method: MethodType
+    entity: EntityType
+    array: list[str]
 
-# if __name__ == "__main__":
-#     # test1 = Webhook(url='https://loh.bitrix24.ru/rest/1/adfad/asdfdasf/')
-#     # test1 = Webhook(url='https://loh.bitrirest/1/adfadfadsf/asdfdasf')
-#     # print(test1._validate())
 
-#     test2 = ReportFile(path=r'C:\Users\alexa\OneDrive\Рабочий стол\crmka\asf')
-#     print(test2.existing_path())
+    def __post_init__(self):
+        if len(self.array) == 0:
+            raise "Массив не содержит ни одного значения"
+        return print("Валидный массив!")
+    
+
+    def api_request(self):
+        pass
