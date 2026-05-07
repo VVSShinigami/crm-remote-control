@@ -14,10 +14,6 @@ class EntityType(Enum):
 class MethodType(Enum):
     DELETE = "delete"
     UPDATE = "update"
-    # GET_LIST = "get_list"
-    # GET_BY_ID = "get_by_id"
-    # GET_FIELDS = "get_fields"
-
 
 
 @dataclass
@@ -57,9 +53,4 @@ class BatchRequest:
 
     def __post_init__(self):
         if len(self.array) == 0:
-            raise "Массив не содержит ни одного значения"
-        return print("Валидный массив!")
-    
-
-    def api_request(self):
-        pass
+            raise ValueError

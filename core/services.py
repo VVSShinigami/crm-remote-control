@@ -1,6 +1,5 @@
-from core.entities import Webhook
-from core.ports import WebhookProtocol
-
+from core.entities import Webhook, ReportFile
+from core.ports import WebhookProtocol, FileProtocol, BatchProtocol
 
 
 class WebhookService:
@@ -16,9 +15,20 @@ class WebhookService:
             self.storage.save(url)
 
 
-    def save_webhook(self):
+    def get_all_webhooks(self) -> list[str]:
         return self.storage.load_all()
+
+
+    def delete_webhook(self, url: str) -> None:
+        webhook = Webhook(url=url)
+        return self.storage.delete(webhook)
     
 
-    def print_notification(self):
-        ...
+class ReportService:
+    def __init__(self, storage: FileProtocol):
+        self.storage = storage
+    
+    
+    def create_report(self, path: str) -> bool:
+        report = ReportFile(path=path)
+        return self.storage.save(report)

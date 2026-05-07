@@ -1,11 +1,11 @@
-from core.entities import Webhook, ReportFile
+from core.entities import Webhook, ReportFile, BatchRequest
 from typing import Protocol
 
 
 class WebhookProtocol(Protocol):
     def save(self, webhook: Webhook) -> bool: ...
     def load_all(self) -> list: ...
-    # def delete(self, webhook: Webhook) -> None: ...
+    def delete(self, webhook: Webhook) -> None: ...
 
 
 class FileProtocol(Protocol):
@@ -14,3 +14,5 @@ class FileProtocol(Protocol):
     def get_all(self) -> list: ...
 
 
+class BatchProtocol(Protocol):
+    def batch_request(self, batch: BatchRequest) -> None: ...
