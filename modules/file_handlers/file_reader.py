@@ -55,18 +55,7 @@ class FileParser:
                 print('CSV')
                 with open(self.file_path, "r", encoding='utf-8') as f:
                     reader = csv.reader(f)
-                    for row in reader: #!!!
+                    for row in reader:
                         print(row)
-                        for r in row:
-                            id = r[0].strip()
-                            result.append(int(_))
-                            print(result)
+                        result.append(int(row[0]))
                 return result
-
-
-
-if __name__ == "__main__":
-    # test = FileParser('/home/godtears/Рабочий стол/Не существующие ID.xlsx')
-    test = FileParser(file_path=r'C:\Users\alexa\OneDrive\Рабочий стол\test2.csv')
-    test = test.read_file()
-    print(f"Джесткий тест: {test}")

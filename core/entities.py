@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 import re
 from pathlib import Path
+from typing import List
 
 
 class EntityType(Enum):
@@ -54,3 +55,21 @@ class BatchRequest:
     def __post_init__(self):
         if len(self.array) == 0:
             raise ValueError
+
+
+@dataclass
+class BatchCommand:
+    entity: EntityType
+    method: MethodType
+    ids: List[int]
+
+    def __post_init__(self):
+        if not self.ids:
+            raise ValueError("BatchCommand не может быть создан с пустым списком ID")
+
+    def to_api_payload(self) -> dict:
+        commands = {
+            f"cmd_{i}": f"crm.{self.entity.value}.{self.method.value}?id={entity_id}"
+            for i, entity_id in enumerate(self.ids)
+        }
+        return {"cmd": commands, "halt": 0}

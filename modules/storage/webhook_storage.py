@@ -27,6 +27,6 @@ class WebhookStorage:
                 for x in webhook_list:
                     f.write(f"{x}\n")
         except FileNotFoundError:
-            print("Файл не найден!!!!")
+            print("Файл не найден")
         except ValueError:
             print("Нет такого значения")
