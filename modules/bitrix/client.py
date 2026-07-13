@@ -1,5 +1,6 @@
 import requests
-from typing import List, Optional
+from typing import List, Dict, Tuple
+from rich.progress import track
 import time
 
 class BitrixClient:
@@ -14,24 +15,31 @@ class BitrixClient:
         ids: List[int],
         entity: str,
         method: str
-    ) -> List[dict]:
-        results = []
+    ) -> Tuple[List[int], List[int]]:
+        realized_ids: List[int] = []
+        unrealized_ids: List[int] = []
         total = len(ids)
-
-        for start in range(0, total, self.BATCH_SIZE):
+        for start in track(range(0, total, self.BATCH_SIZE), description="Выполняется..."):
             chunk = ids[start:start + self.BATCH_SIZE]
             commands = {}
-
+            cmd_to_id_map: Dict[str, int] = {}
             for i, entity_id in enumerate(chunk):
-                commands[f"cmd_{i}"] = f"crm.{entity}.{method}?id={entity_id}"
-
+                cmd_key = f"cmd_{i}"
+                commands[cmd_key] = f"crm.{entity}.{method}?id={entity_id}"
+                cmd_to_id_map[cmd_key] = entity_id
             response = requests.post(
                 url=f"{self.webhook}/batch",
                 json={"cmd": commands, "halt": 0}
-            )
-            results.append(response.json())
-
+            ).json()
+            result_data = response.get("result", {})
+            result_errors = response.get("result_error", {})
+            for cmd_key, original_id in cmd_to_id_map.items():
+                if cmd_key in result_errors:
+                    unrealized_ids.append(original_id)
+                elif cmd_key in result_data:
+                    realized_ids.append(original_id)
+                else:
+                    unrealized_ids.append(original_id)
             if self.pause_time and start + self.BATCH_SIZE < total:
                 time.sleep(self.pause_time)
-
-        return results
+        return realized_ids, unrealized_ids

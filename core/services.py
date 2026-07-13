@@ -1,6 +1,10 @@
 from typing import List
 from core.entities import Webhook, ReportFile, BatchCommand, EntityType, MethodType
 from core.ports import WebhookProtocol, FileProtocol, BatchProtocol
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+from modules.excelreport.report import ExcelReport
 
 
 class WebhookService:
@@ -31,13 +35,12 @@ class ReportService:
 
 
 class CrmOperationService:
-    def __init__(self, bitrix_client: BatchProtocol, file_parser: FileProtocol):
-        self.bitrix_client = bitrix_client
+    def __init__(self, file_parser, report_service):
         self.file_parser = file_parser
+        self.report_service = report_service
 
-    def execute_operation(self, entity: str, method: str, file_path: str) -> dict:
+    def execute_operation(self, bitrix_client, entity: str, method: str, file_path: str) -> dict:
         ids = self.file_parser.read_file(file_path)
-
         if not ids:
             return {"success": False, "message": "Файл пуст или не найден"}
 
@@ -74,3 +77,20 @@ class CrmOperationService:
             "total": total,
             "results": results
         }
+    
+
+class ReportService:
+    def __init__(self, settings: dict):
+        self.settings = settings
+
+    def create_report(self, realized: list[int], unrealized: list[int]) -> str | None:
+        if not self.settings.get("report_enabled", True):
+            return None
+
+        filename = f"Отчет_{datetime.now().strftime('%d.%m.%Y_%H_%M_%S')}.xlsx"
+        output_path = str(Path.home() / filename)
+
+        report = ExcelReport(realized_ids=realized, unrealized_ids=unrealized)
+        if report.generate(output_path):
+            return output_path
+        return None

@@ -1,40 +1,36 @@
-# # main.py
-# from modules.storage.webhook_storage import WebhookStorage
-# from core.entities import Webhook
+from datetime import datetime
+from pathlib import Path
 
-# storage = WebhookStorage()
-
-# webhook = Webhook(url="https://test.bitrix24.ru/rest/1/a/b/")
-
-# print("Сохраняем...")
-# storage.save(webhook)
-
-# print("Загружаем:")
-# all_webhooks = storage.get_all()
-# for url in all_webhooks:
-#     print(f"  - {url}")
-
-# print("Удаляем...")
-# storage.delete(webhook)
-
-# print("Осталось:")
-# remaining = storage.get_all()
-# print(f"  Количество: {len(remaining)}")
-
-from core.services import WebhookService
+from core.services import WebhookService, CrmOperationService, ReportService
 from modules.storage.webhook_storage import WebhookStorage
+from modules.file_handlers.file_reader import FileParser
+from modules.bitrix.client import BitrixClient
 from ui.app import Application
 from ui.console_view import ConsoleView
 
 
 def main():
     storage = WebhookStorage()
+    file_parser = FileParser()
+
     webhook_service = WebhookService(storage)
+
+    settings = {
+        "report_enabled": True,
+        "pause_time": 0.3
+    }
+
+    report_service = ReportService(settings=settings)
     view = ConsoleView()
+
+    op_service = CrmOperationService(
+        file_parser=file_parser,
+        report_service=report_service
+    )
 
     app = Application(
         webhook_service=webhook_service,
-        op_service=None,
+        op_service=op_service,
         view=view
     )
 

@@ -23,11 +23,9 @@ class Webhook:
     is_valid: bool = False
     pattern: str = r'^https://[a-zA-Z0-9-]+\.bitrix24\.[a-z]{2,}/rest/\d+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/?$'
 
-
     def validate(self) -> bool:
-        validate = re.fullmatch(pattern=self.pattern, string=self.url)
-        if type(validate) == re.Match:
-            self.is_valid = True
+        match = re.fullmatch(pattern=self.pattern, string=self.url)
+        self.is_valid = match is not None
         return self.is_valid
 
 
@@ -36,25 +34,11 @@ class ReportFile:
     path: str
     created: bool = False
 
-
     def existing_path(self) -> bool:
-        path = Path(self.path).exists()
-        if path:
+        exists = Path(self.path).exists()
+        if exists:
             self.created = True
-        return self.created
-
-
-@dataclass
-class BatchRequest:
-    webhook: Webhook
-    method: MethodType
-    entity: EntityType
-    array: list[str]
-
-
-    def __post_init__(self):
-        if len(self.array) == 0:
-            raise ValueError
+        return exists
 
 
 @dataclass

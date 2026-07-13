@@ -1,6 +1,7 @@
 from typing import Optional
 from ui.console_view import ConsoleView
 from core.services import CrmOperationService
+from modules.bitrix.client import BitrixClient
 
 
 class OperationCommand:
@@ -9,6 +10,10 @@ class OperationCommand:
         self.view = view
 
     def execute(self) -> None:
+        webhook_url = self.view.ask_webhook()
+        if not webhook_url:
+            return
+
         entity = self.view.ask_entity()
         if not entity:
             return
@@ -21,7 +26,10 @@ class OperationCommand:
         if not file_path:
             return
 
+        client = BitrixClient(webhook=webhook_url)
+
         result = self.service.execute_operation(
+            bitrix_client=client,
             entity=entity,
             method=method,
             file_path=file_path
