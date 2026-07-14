@@ -11,7 +11,7 @@ class WebhookStorage:
             pass
 
 
-    def get_all(self) -> list[str]:
+    def load_all(self) -> list[str]:
         try:
             with open("saved_webhooks.txt", "r", encoding='utf-8') as f:
                 return list(f.read().split())

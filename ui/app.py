@@ -20,12 +20,18 @@ class Application:
             self.view.show_main_panel(mapping_type='welcome')
             choice = self.view.ask_main_menu()
 
-            if choice == "exit":
+            if choice == "Выйти":
                 self.view.show_bye()
                 break
-            elif choice == "webhooks":
+            elif choice == "Вебхуки":
                 self.webhook_cmd.execute()
-            elif choice == "start":
+            elif choice == "Начать":
                 self.op_cmd.execute()
+            elif choice == "Инструкция":
+                self.view.console.print("Инструкция: https://github.com/VVSShinigami")
+                self.view.wait_for_enter()
+            elif choice == "Настройки":
+                self.view.console.print("Обновите версию приложения, в данной версии настройки не доступны")
+                self.view.wait_for_enter()
 
             self.view.clear()

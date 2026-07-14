@@ -18,6 +18,8 @@ class WebhookCommand:
                 self._list_webhooks()
             elif choice == "delete":
                 self._delete_webhook()
+            elif choice == "choosed":
+                self.view.ask_entity()
             elif choice == "back":
                 return
 
@@ -32,7 +34,6 @@ class WebhookCommand:
 
     def _list_webhooks(self) -> None:
         webhooks = self.service.get_all_webhooks()
-        self.view.show_webhook_list(webhooks)
         self.view.wait_for_enter()
 
     def _delete_webhook(self) -> None:

@@ -10,7 +10,7 @@ class OperationCommand:
         self.view = view
 
     def execute(self) -> None:
-        webhook_url = self.view.ask_webhook()
+        webhook_url = self.view.ask_webhook_url()
         if not webhook_url:
             return
 
