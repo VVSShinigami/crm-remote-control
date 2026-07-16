@@ -35,6 +35,7 @@ class ConsoleView:
         elif mapping_type == 'webhook_notation':
             self.console.print(webhook_notation)
 
+
     def ask_main_menu(self) -> str:
         choices = ["Начать", "Вебхуки", "Инструкция", "Настройки", "Выйти"]
         return questionary.select(
@@ -44,9 +45,9 @@ class ConsoleView:
             qmark="⚙️"
         ).ask() or "exit"
 
+
     def ask_webhook_menu(self) -> str:
         choices = [
-            "Список вебхуков",
             "Удалить вебхук",
             "Назад"
         ]
@@ -56,15 +57,37 @@ class ConsoleView:
             style=self._style,
             qmark="⚙️"
         ).ask()
-        if result == "Список вебхуков": 
-            self.clear()
-            self.show_main_panel()
-            return "choosed"
         if result == "Удалить вебхук": 
             self.clear()
             self.show_main_panel()
             return "delete"
         return "back"
+
+
+    def ask_start_webhook_menu(self) -> str | None:
+        choices = [
+            "Ввести вебхук",
+            "Выбрать из сохраненных",
+            "Назад"
+        ]
+        webhook = questionary.select(
+            message='Управление вебхуками',
+            choices=choices,
+            style=self._style,
+        ).ask()
+        if webhook == "Назад":
+            return None
+        return webhook
+
+
+    def choose_webhook(self, webhooks_list) -> str:
+        webhook = questionary.select(
+            message='Управление вебхуками',
+            choices=webhooks_list,
+            style=self._style
+        ).ask()
+        return webhook
+
 
     def ask_webhook_url(self) -> Optional[str]:
         self.console.print(webhook_notation)
@@ -75,11 +98,13 @@ class ConsoleView:
         ).ask()
         return url.strip() if url else None
 
+
     def show_webhook_add_result(self, success: bool) -> None:
         if success:
             self.console.print("[success]✅ Вебхук успешно сохранён![/success]")
         else:
             self.console.print("[error]❌ Ошибка: неверный формат или не удалось сохранить[/error]")
+
 
     def show_webhook_list(self, webhooks: list) -> str | None:
         choices = []
@@ -101,8 +126,10 @@ class ConsoleView:
         else:
             return selected_webhook
 
+
     def show_empty_webhook_list(self) -> None:
         self.console.print("[yellow]Список вебхуков пуст[/yellow]")
+
 
     def ask_webhook_to_delete(self, webhooks: list):
         if not webhooks:
@@ -126,20 +153,25 @@ class ConsoleView:
                 return wh
         return None
 
+
     def show_webhook_delete_result(self, success: bool) -> None:
         if success:
             self.console.print("[success]Вебхук удалён![/success]")
         else:
             self.console.print("[error]Не удалось удалить вебхук[/error]")
 
+
     def wait_for_enter(self) -> None:
         questionary.press_any_key_to_continue(message="Нажмите любую клавишу для продолжения...").ask()
+
 
     def clear(self) -> None:
         self.console.clear()
 
+
     def show_bye(self) -> None:
         self.console.print(bye_art)
+
 
     def ask_entity(self) -> Optional[str]:
         choices = ["Сделка", "Лид", "Контакт", "Компания", "Назад"]
@@ -151,6 +183,7 @@ class ConsoleView:
         ).ask()
         return None if result == "Назад" else result
 
+
     def ask_method(self) -> Optional[str]:
         choices = ["Удалить", "Обновить", "Назад"]
         result = questionary.select(
@@ -161,6 +194,7 @@ class ConsoleView:
         ).ask()
         return None if result == "Назад" else result
 
+
     def ask_file_path(self) -> Optional[str]:
         path = questionary.text(
             message="Путь к файлу с ID (xlsx/csv/txt):",
@@ -168,6 +202,7 @@ class ConsoleView:
             qmark="📁"
         ).ask()
         return path.strip() if path else None
+
 
     def show_operation_result(self, result: dict) -> None:
         if not result.get("success"):

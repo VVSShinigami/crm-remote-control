@@ -12,16 +12,14 @@ class WebhookCommand:
         while True:
             choice = self.view.ask_webhook_menu()
 
-            if choice == "add":
-                self._add_webhook()
-            elif choice == "list":
-                self._list_webhooks()
-            elif choice == "delete":
+            # if choice == "add":
+            #     self._add_webhook()
+            # elif choice == "list":
+            #     self._list_webhooks()
+            if choice == "delete":
                 self._delete_webhook()
-            elif choice == "choosed":
-                self.view.ask_entity()
             elif choice == "back":
-                return
+                return choice
 
     def _add_webhook(self) -> None:
         url = self.view.ask_webhook_url()

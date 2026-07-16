@@ -13,7 +13,7 @@ class Application:
     ):
         self.view = view
         self.webhook_cmd = WebhookCommand(webhook_service, view)
-        self.op_cmd = OperationCommand(op_service, view)
+        self.op_cmd = OperationCommand(op_service, webhook_service, view)
 
     def run(self) -> None:
         while True:
