@@ -10,10 +10,13 @@ class OperationCommand:
         self.view = view
         self.webhook_service = webhook_service
 
+
     def execute(self) -> None:
+        self.view.clear()
+        self.view.show_main_panel()
         webhook_url = self.view.ask_start_webhook_menu()
         if webhook_url is None:
-            return
+            return None
         elif webhook_url == "Выбрать из сохраненных":
             webhooks_list = self.webhook_service.get_all_webhooks()
             webhook_url = self.view.choose_webhook(webhooks_list)
@@ -21,24 +24,19 @@ class OperationCommand:
             webhook_url = self.view.ask_webhook_url()
         entity = self.view.ask_entity()
         if not entity:
-            return
-
+            return None
         method = self.view.ask_method()
         if not method:
-            return
-
+            return None
         file_path = self.view.ask_file_path()
         if not file_path:
-            return
-
+            return None
         client = BitrixClient(webhook=webhook_url)
-
         result = self.service.execute_operation(
             bitrix_client=client,
             entity=entity,
             method=method,
             file_path=file_path
         )
-
         self.view.show_operation_result(result)
         self.view.wait_for_enter()

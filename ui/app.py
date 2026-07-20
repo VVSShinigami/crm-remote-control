@@ -15,11 +15,11 @@ class Application:
         self.webhook_cmd = WebhookCommand(webhook_service, view)
         self.op_cmd = OperationCommand(op_service, webhook_service, view)
 
+
     def run(self) -> None:
         while True:
             self.view.show_main_panel(mapping_type='welcome')
             choice = self.view.ask_main_menu()
-
             if choice == "Выйти":
                 self.view.show_bye()
                 break

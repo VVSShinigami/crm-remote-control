@@ -21,7 +21,7 @@ class WebhookStorage:
 
     def delete(self, webhook: Webhook) -> None:
         try:
-            webhook_list = self.get_all()
+            webhook_list = self.load_all()
             webhook_list = webhook_list.remove(webhook)
             with open("saved_webhooks.txt", "w", encoding='utf-8') as f:
                 for x in webhook_list:
