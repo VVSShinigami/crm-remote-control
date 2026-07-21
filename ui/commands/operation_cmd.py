@@ -21,7 +21,15 @@ class OperationCommand:
             webhooks_list = self.webhook_service.get_all_webhooks()
             webhook_url = self.view.choose_webhook(webhooks_list)
         else:
-            webhook_url = self.view.ask_webhook_url()
+            url = self.view.ask_webhook_url()
+            print(f"Полученный урл - {url}")
+            webhook_entity = self.webhook_service.register_webhook(url=url)
+            print(f"Ответ из сервиса - {webhook_entity}")
+        if webhook_entity != True:
+            self.view.console.print("[error]Ошибка: Неверный формат вебхука[/error]")
+            url = self.view.ask_webhook_url()
+            print(f"Полученный урл - {url}")
+        print('Все успешно!')
         entity = self.view.ask_entity()
         if not entity:
             return None

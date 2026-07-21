@@ -21,12 +21,14 @@ class MethodType(Enum):
 class Webhook:
     url: str
     is_valid: bool = False
-    pattern: str = r'^https://[a-zA-Z0-9-]+\.bitrix24\.[a-z]{2,}/rest/\d+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/?$'
+    pattern: str = r'^https://[a-zA-Z0-9-]+\.bitrix24\.[a-z]{2,}/rest/\d+/[a-zA-Z0-9]+(?:/[a-zA-Z0-9]+)?/?$'
 
+    
     def validate(self) -> bool:
         match = re.fullmatch(pattern=self.pattern, string=self.url)
-        self.is_valid = match is not None
-        return self.is_valid
+        # self.is_valid = match is not None
+        print(f"ЖЕСТКИЙ МЭТЧ - {match}")
+        return match is not None
 
 
 @dataclass

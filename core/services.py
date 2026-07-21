@@ -11,14 +11,17 @@ class WebhookService:
     def __init__(self, storage: WebhookProtocol):
         self.storage = storage
 
+
     def register_webhook(self, url: str) -> bool:
         webhook = Webhook(url=url)
-        if not webhook.validate():
-            return False
-        return self.storage.save(webhook)
+        # if not webhook.validate():
+        #     return False
+        return webhook.validate()
+            
 
     def get_all_webhooks(self) -> list:
         return self.storage.load_all()
+
 
     def delete_webhook(self, url: str) -> bool:
         webhook = Webhook(url=url)
