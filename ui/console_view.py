@@ -4,6 +4,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.theme import Theme
 import questionary
+import functools
 from ui.arts import shngm_art, welcome_message, action_notation, webhook_notation, bye_art
 
 
@@ -34,6 +35,21 @@ class ConsoleView:
             self.console.print(action_notation)
         elif mapping_type == 'webhook_notation':
             self.console.print(webhook_notation)
+
+    def clear(self) -> None:
+        self.console.clear()
+
+
+    @staticmethod
+    def clear_dec(func) -> None:
+        functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            self_instance = args[0]
+            self_instance.clear()
+            self_instance.show_main_panel()
+            res = func(*args, **kwargs)
+            return res
+        return wrapper
 
 
     def ask_main_menu(self) -> str:
@@ -165,14 +181,10 @@ class ConsoleView:
         questionary.press_any_key_to_continue(message="Нажмите любую клавишу для продолжения...").ask()
 
 
-    def clear(self) -> None:
-        self.console.clear()
-
-
     def show_bye(self) -> None:
         self.console.print(bye_art)
 
-
+    @clear_dec
     def ask_entity(self) -> Optional[str]:
         choices = ["Сделка", "Лид", "Контакт", "Компания", "Назад"]
         result = questionary.select(
@@ -194,7 +206,7 @@ class ConsoleView:
         ).ask()
         return None if result == "Назад" else result
 
-
+    @clear_dec
     def ask_file_path(self) -> Optional[str]:
         path = questionary.text(
             message="Путь к файлу с ID (xlsx/csv/txt):",

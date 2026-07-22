@@ -2,6 +2,8 @@ from typing import Optional
 from ui.console_view import ConsoleView
 from core.services import CrmOperationService, WebhookService
 from modules.bitrix.client import BitrixClient
+import functools
+
 
 
 class OperationCommand:
@@ -11,9 +13,18 @@ class OperationCommand:
         self.webhook_service = webhook_service
 
 
+    def clear_dec(func) -> None:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            self_instance = args[0]
+            self_instance.view.clear()
+            self_instance.view.show_main_panel()
+            res = func(*args, **kwargs)
+            return res
+        return wrapper
+
+    @clear_dec
     def execute(self) -> None:
-        self.view.clear()
-        self.view.show_main_panel()
         webhook_url = self.view.ask_start_webhook_menu()
         if webhook_url is None:
             return None
@@ -21,15 +32,14 @@ class OperationCommand:
             webhooks_list = self.webhook_service.get_all_webhooks()
             webhook_url = self.view.choose_webhook(webhooks_list)
         else:
-            url = self.view.ask_webhook_url()
-            print(f"Полученный урл - {url}")
-            webhook_entity = self.webhook_service.register_webhook(url=url)
-            print(f"Ответ из сервиса - {webhook_entity}")
-        if webhook_entity != True:
-            self.view.console.print("[error]Ошибка: Неверный формат вебхука[/error]")
-            url = self.view.ask_webhook_url()
-            print(f"Полученный урл - {url}")
-        print('Все успешно!')
+            while True:
+                url = self.view.ask_webhook_url()
+                webhook_entity = self.webhook_service.register_webhook(url=url)
+                if webhook_entity != True:
+                    self.view.console.print("[error]Ошибка: Неверный формат вебхука[/error]")
+                else:
+                    self.view.console.print("[success]Вебхук принят[/success]")
+                    break
         entity = self.view.ask_entity()
         if not entity:
             return None
@@ -39,7 +49,7 @@ class OperationCommand:
         file_path = self.view.ask_file_path()
         if not file_path:
             return None
-        client = BitrixClient(webhook=webhook_url)
+        client = BitrixClient(webhook=url)
         result = self.service.execute_operation(
             bitrix_client=client,
             entity=entity,

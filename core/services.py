@@ -14,8 +14,6 @@ class WebhookService:
 
     def register_webhook(self, url: str) -> bool:
         webhook = Webhook(url=url)
-        # if not webhook.validate():
-        #     return False
         return webhook.validate()
             
 
