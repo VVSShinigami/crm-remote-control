@@ -3,6 +3,7 @@ from enum import Enum
 import re
 from pathlib import Path
 from typing import List
+import json
 
 
 class EntityType(Enum):
@@ -57,3 +58,14 @@ class BatchCommand:
             for i, entity_id in enumerate(self.ids)
         }
         return {"cmd": commands, "halt": 0}
+    
+
+@dataclass
+class Settings:
+    pause_time: float
+    report_enabled: bool
+    report_path: str
+    history_track: bool
+
+    def validate(self) -> bool:
+        pass

@@ -23,8 +23,6 @@ class Application:
             if choice == "Выйти":
                 self.view.show_bye()
                 break
-            elif choice == "Вебхуки":
-                self.webhook_cmd.execute()
             elif choice == "Начать":
                 self.op_cmd.execute()
             elif choice == "Инструкция":

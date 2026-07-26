@@ -95,3 +95,8 @@ class ReportService:
         if report.generate(output_path):
             return output_path
         return None
+    
+
+class SettingsService:
+    def __init__(self, settings: dict):
+        pass

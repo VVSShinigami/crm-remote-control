@@ -53,7 +53,7 @@ class ConsoleView:
 
 
     def ask_main_menu(self) -> str:
-        choices = ["Начать", "Вебхуки", "Инструкция", "Настройки", "Выйти"]
+        choices = ["Начать", "Инструкция", "Настройки", "Выйти"]
         return questionary.select(
             message='Главное меню:',
             choices=choices,
