@@ -3,9 +3,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.theme import Theme
+from rich.table import Table
 import questionary
 import functools
 from ui.arts import shngm_art, welcome_message, action_notation, webhook_notation, bye_art
+from core.entities import Settings
 
 
 class ConsoleView:
@@ -228,3 +230,101 @@ class ConsoleView:
         self.console.print(f"[success]Выполнено: {processed}/{total}[/success]")
         if report_path:
             self.console.print(f"[success]📊 Отчет сохранен: {report_path}[/success]")
+
+
+    # def show_current_settings(self, settings):
+    #     print(settings)
+
+
+    # def show_fail_settings(self):
+    #     print(f"Настройки приложения не заданы!")
+
+    def show_current_settings(self, settings: Settings) -> None:
+        table = Table(title="Текущие настройки", border_style="#217718")
+        table.add_column("Параметр", style="cyan")
+        table.add_column("Значение", style="green", justify="right")
+
+        table.add_row("Задержка между запросами", f"{settings.pause_time} сек")
+        table.add_row("Генерация отчетов", "Да" if settings.report_enabled else "Нет")
+        table.add_row("Отслеживание истории", "Да" if settings.history_track else "Нет")
+        table.add_row("Путь для отчетов", settings.report_path)
+
+        self.console.print(table)
+
+    def ask_settings_action(self) -> str:
+        choices = [
+            "Изменить задержку",
+            "Переключить отчеты",
+            "Переключить историю",
+            "Назад"
+        ]
+        result = questionary.select(
+            message="Выберите настройку для изменения:",
+            choices=choices,
+            style=self._style
+        ).ask()
+
+        if result == "Изменить задержку": 
+            return "pause_time"
+        if result == "Переключить отчеты": 
+            return "report_enabled"
+        if result == "Переключить историю": 
+            return "history_track"
+        return "back"
+
+    def ask_toggle_setting(self, current_value: bool, description: str) -> bool:
+        result = questionary.confirm(
+            message=f"{description} (сейчас {'вкл' if current_value else 'выкл'}). Переключить?",
+            style=self._style,
+            default=not current_value
+        ).ask()
+        
+        return result if result is not None else current_value
+
+    def ask_float_setting(self, current_value: float, description: str) -> float:
+        result = questionary.text(
+            message=f"{description} (сейчас {current_value}). Введите новое значение:",
+            style=self._style
+        ).ask()
+
+        if not result:
+            return current_value
+
+        try:
+            new_val = float(result)
+            if new_val < 0:
+                self.console.print("[error]Значение не может быть отрицательным[/error]")
+                return current_value
+            return new_val
+        except ValueError:
+            self.console.print("[error]Введите корректное число[/error]")
+            return current_value
+
+
+    def ask_toggle_setting(self, current_value: bool, description: str) -> bool:
+        return questionary.confirm(
+            message=f"{description} (сейчас {'вкл' if current_value else 'выкл'}). Переключить?",
+            style=self._style,
+            default=not current_value
+        ).ask()
+
+    def ask_float_setting(self, current_value: float, description: str) -> float:
+        result = questionary.text(
+            message=f"{description} (сейчас {current_value}). Введите новое значение:",
+            style=self._style,
+            validate=lambda val: True if self._is_valid_float(val) else "Введите число"
+        ).ask()
+        
+        if result:
+            try:
+                return float(result)
+            except ValueError:
+                return current_value
+        return current_value
+
+    def _is_valid_float(self, value: str) -> bool:
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False

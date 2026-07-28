@@ -35,6 +35,7 @@ class ReportFile:
     path: str
     created: bool = False
 
+
     def existing_path(self) -> bool:
         exists = Path(self.path).exists()
         if exists:
@@ -48,9 +49,11 @@ class BatchCommand:
     method: MethodType
     ids: List[int]
 
+
     def __post_init__(self):
         if not self.ids:
             raise ValueError("BatchCommand не может быть создан с пустым списком ID")
+
 
     def to_api_payload(self) -> dict:
         commands = {
@@ -67,5 +70,14 @@ class Settings:
     report_path: str
     history_track: bool
 
+
     def validate(self) -> bool:
-        pass
+        if not isinstance(self.pause_time, (int, float)) or self.pause_time < 0:
+            return False
+        if not isinstance(self.report_enabled, bool):
+            return False
+        if not isinstance(self.report_path, str) or not self.report_path.strip():
+            return False
+        if not isinstance(self.history_track, bool):
+            return False
+        return True

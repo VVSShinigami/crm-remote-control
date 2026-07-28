@@ -1,4 +1,4 @@
-from core.entities import Webhook, ReportFile, BatchCommand
+from core.entities import Webhook, ReportFile, BatchCommand, Settings
 from typing import Protocol
 
 
@@ -16,3 +16,9 @@ class FileProtocol(Protocol):
 
 class BatchProtocol(Protocol):
     def batch_request(self, batch: BatchCommand) -> None: ...
+
+
+class SettingsStorageProtocol(Protocol):
+    def load(self) -> Settings: ...
+
+    def save(self, settings: Settings) -> bool: ...

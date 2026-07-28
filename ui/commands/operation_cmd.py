@@ -23,6 +23,7 @@ class OperationCommand:
             return res
         return wrapper
 
+
     @clear_dec
     def execute(self) -> None:
         webhook_url = self.view.ask_start_webhook_menu()

@@ -1,6 +1,6 @@
 from typing import List
-from core.entities import Webhook, ReportFile, BatchCommand, EntityType, MethodType
-from core.ports import WebhookProtocol, FileProtocol, BatchProtocol
+from core.entities import Webhook, ReportFile, BatchCommand, EntityType, MethodType, Settings
+from core.ports import WebhookProtocol, FileProtocol, BatchProtocol, SettingsStorageProtocol
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -95,8 +95,20 @@ class ReportService:
         if report.generate(output_path):
             return output_path
         return None
-    
+
 
 class SettingsService:
-    def __init__(self, settings: dict):
-        pass
+    def __init__(self, storage: SettingsStorageProtocol):
+        self.storage = storage
+
+
+    def load_settings(self) -> Settings:
+        data = self.storage.load()
+        settings = Settings(**data)
+        if not settings.validate():
+            raise ValueError("Некорректные настройки")
+        return settings
+
+
+    def save_settings(self, settings: Settings) -> bool:
+        return self.storage.save(settings)
