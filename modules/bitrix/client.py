@@ -3,6 +3,8 @@ from typing import List, Dict, Tuple
 from rich.progress import track
 import time
 
+
+
 class BitrixClient:
     BATCH_SIZE = 50
 

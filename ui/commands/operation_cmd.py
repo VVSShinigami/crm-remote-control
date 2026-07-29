@@ -1,19 +1,20 @@
 from typing import Optional
 from ui.console_view import ConsoleView
 from core.services import CrmOperationService, WebhookService
+from core.entities import Settings
 from modules.bitrix.client import BitrixClient
 import functools
 
 
-
 class OperationCommand:
-    def __init__(self, service: CrmOperationService, webhook_service: WebhookService, view: ConsoleView):
+    def __init__(self, service: CrmOperationService, webhook_service: WebhookService, settings: Settings, view: ConsoleView):
         self.service = service
         self.view = view
         self.webhook_service = webhook_service
+        self.settings = settings
 
-
-    def clear_dec(func) -> None:
+    @staticmethod
+    def clear_dec(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             self_instance = args[0]
@@ -23,12 +24,11 @@ class OperationCommand:
             return res
         return wrapper
 
-
     @clear_dec
     def execute(self) -> None:
         webhook_url = self.view.ask_start_webhook_menu()
         if webhook_url is None:
-            return None
+            return
         elif webhook_url == "Выбрать из сохраненных":
             webhooks_list = self.webhook_service.get_all_webhooks()
             webhook_url = self.view.choose_webhook(webhooks_list)
@@ -41,16 +41,19 @@ class OperationCommand:
                 else:
                     self.view.console.print("[success]Вебхук принят[/success]")
                     break
+            webhook_url = url
+        if not webhook_url:
+            return
         entity = self.view.ask_entity()
         if not entity:
-            return None
+            return
         method = self.view.ask_method()
         if not method:
-            return None
+            return
         file_path = self.view.ask_file_path()
         if not file_path:
-            return None
-        client = BitrixClient(webhook=url)
+            return
+        client = BitrixClient(webhook=webhook_url, pause_time=self.settings.pause_time)
         result = self.service.execute_operation(
             bitrix_client=client,
             entity=entity,

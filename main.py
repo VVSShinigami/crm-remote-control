@@ -16,6 +16,7 @@ def main():
     file_parser = FileParser()
     webhook_service = WebhookService(webhook_storage)
     settings_service = SettingsService(settings_storage)
+    
     try:
         app_settings = settings_service.load_settings()
     except (FileNotFoundError, ValueError, TypeError):
@@ -26,20 +27,18 @@ def main():
             history_track=True
         )
         settings_service.save_settings(app_settings)
-
     report_service = ReportService(settings=app_settings)
-    
     op_service = CrmOperationService(
         file_parser=file_parser,
         report_service=report_service
     )
 
     view = ConsoleView()
-
     app = Application(
         webhook_service=webhook_service,
         op_service=op_service,
         settings_service=settings_service,
+        settings=app_settings,
         view=view
     )
 

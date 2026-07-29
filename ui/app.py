@@ -3,6 +3,7 @@ from ui.commands.webhook_cmd import WebhookCommand
 from ui.commands.operation_cmd import OperationCommand
 from ui.commands.settings_cmd import SettingsCommand
 from core.services import WebhookService, CrmOperationService, SettingsService
+from core.entities import Settings
 
 
 class Application:
@@ -11,12 +12,12 @@ class Application:
         webhook_service: WebhookService,
         op_service: CrmOperationService,
         settings_service: SettingsService,
+        settings: Settings,
         view: ConsoleView
-
     ):
         self.view = view
         self.webhook_cmd = WebhookCommand(webhook_service, view)
-        self.op_cmd = OperationCommand(op_service, webhook_service, view)
+        self.op_cmd = OperationCommand(op_service, webhook_service, settings, view)
         self.settings_op = SettingsCommand(settings_service, view)
 
 
@@ -34,6 +35,4 @@ class Application:
                 self.view.wait_for_enter()
             elif choice == "Настройки":
                 self.settings_op.execute()
-                self.view.wait_for_enter()
-
             self.view.clear()
