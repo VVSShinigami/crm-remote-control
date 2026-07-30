@@ -115,6 +115,19 @@ class ConsoleView:
             qmark="🔗"
         ).ask()
         return url.strip() if url else None
+    
+
+    def ask_webhook_save(self) -> bool:
+        choices = ["Да", "Нет"]
+        save_txt = questionary.select(
+                message="Сохранить вебхук?",
+                choices=choices,
+                style=self._style,
+        ).ask()
+        if save_txt is None:
+            return False
+            
+        return save_txt == "Да"
 
 
     def show_webhook_add_result(self, success: bool) -> None:

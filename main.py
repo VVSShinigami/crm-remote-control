@@ -16,7 +16,6 @@ def main():
     file_parser = FileParser()
     webhook_service = WebhookService(webhook_storage)
     settings_service = SettingsService(settings_storage)
-    
     try:
         app_settings = settings_service.load_settings()
     except (FileNotFoundError, ValueError, TypeError):

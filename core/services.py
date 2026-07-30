@@ -15,6 +15,13 @@ class WebhookService:
     def register_webhook(self, url: str) -> bool:
         webhook = Webhook(url=url)
         return webhook.validate()
+    
+
+    def save_webhook(self, url: str) -> bool:
+        webhook = Webhook(url=url)
+        if not webhook.validate():
+            return False
+        return self.storage.save(webhook)
             
 
     def get_all_webhooks(self) -> list:

@@ -1,19 +1,25 @@
 from core.ports import WebhookProtocol
 from core.entities import Webhook
+from pathlib import Path
+import time
+
+class WebhookStorage(WebhookProtocol):
+    def __init__(self, path: str = "saved_webhooks.txt"):
+        self.path = Path(path)
 
 
-class WebhookStorage:
-    def save(self, webhook: Webhook) -> None:
+    def save(self, webhook: Webhook) -> bool:
         try:
-            with open("saved_webhooks.txt", "a", encoding='utf-8') as f:
+            with open(self.path, "a", encoding="utf-8") as f:
                 f.write(f"{webhook.url}\n")
+            return True
         except OSError:
-            pass
+            return False
 
 
     def load_all(self) -> list[str]:
         try:
-            with open("saved_webhooks.txt", "r", encoding='utf-8') as f:
+            with open(self.path, "r", encoding='utf-8') as f:
                 return list(f.read().split())
         except FileNotFoundError:
             pass
@@ -23,7 +29,7 @@ class WebhookStorage:
         try:
             webhook_list = self.load_all()
             webhook_list = webhook_list.remove(webhook)
-            with open("saved_webhooks.txt", "w", encoding='utf-8') as f:
+            with open(self.path, "w", encoding='utf-8') as f:
                 for x in webhook_list:
                     f.write(f"{x}\n")
         except FileNotFoundError:

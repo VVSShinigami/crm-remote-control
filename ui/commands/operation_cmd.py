@@ -13,6 +13,7 @@ class OperationCommand:
         self.webhook_service = webhook_service
         self.settings = settings
 
+
     @staticmethod
     def clear_dec(func):
         @functools.wraps(func)
@@ -23,6 +24,7 @@ class OperationCommand:
             res = func(*args, **kwargs)
             return res
         return wrapper
+
 
     @clear_dec
     def execute(self) -> None:
@@ -41,6 +43,9 @@ class OperationCommand:
                 else:
                     self.view.console.print("[success]Вебхук принят[/success]")
                     break
+            webhook_save = self.view.ask_webhook_save()
+            if webhook_save == True:
+                self.webhook_service.save_webhook(url=url)
             webhook_url = url
         if not webhook_url:
             return

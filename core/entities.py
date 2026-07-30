@@ -26,6 +26,8 @@ class Webhook:
 
 
     def validate(self) -> bool:
+        if self.url is None:
+            return None
         match = re.fullmatch(pattern=self.pattern, string=self.url)
         return match is not None
 
