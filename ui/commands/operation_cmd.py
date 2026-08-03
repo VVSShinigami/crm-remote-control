@@ -55,6 +55,15 @@ class OperationCommand:
         method = self.view.ask_method()
         if not method:
             return
+        elif method == "Обновить":
+            field_id = self.view._ask_field_until_valid()
+            field_value = self.view.ask_field_value()
+            if not field_id or not field_value:
+                return
+        else:
+            field_id = None
+            field_value = None
+
         file_path = self.view.ask_file_path()
         if not file_path:
             return
@@ -63,7 +72,9 @@ class OperationCommand:
             bitrix_client=client,
             entity=entity,
             method=method,
-            file_path=file_path
+            file_path=file_path,
+            field_id=field_id,
+            field_value=field_value
         )
         self.view.show_operation_result(result)
         self.view.wait_for_enter()

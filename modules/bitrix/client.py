@@ -16,25 +16,35 @@ class BitrixClient:
         self,
         ids: List[int],
         entity: str,
-        method: str
+        method: str,
+        field_id: str | None, 
+        field_value: str | None
     ) -> Tuple[List[int], List[int]]:
         realized_ids: List[int] = []
         unrealized_ids: List[int] = []
         total = len(ids)
+
         for start in track(range(0, total, self.BATCH_SIZE), description="Выполняется..."):
             chunk = ids[start:start + self.BATCH_SIZE]
             commands = {}
             cmd_to_id_map: Dict[str, int] = {}
             for i, entity_id in enumerate(chunk):
-                cmd_key = f"cmd_{i}"
-                commands[cmd_key] = f"crm.{entity}.{method}?id={entity_id}"
-                cmd_to_id_map[cmd_key] = entity_id
+                if field_id is None:
+                    cmd_key = f"cmd_{i}"
+                    commands[cmd_key] = f"crm.{entity}.{method}?id={entity_id}"
+                    cmd_to_id_map[cmd_key] = entity_id
+                else:
+                    cmd_key = f"cmd_{i}"
+                    commands[cmd_key] = f"crm.{entity}.{method}?id={entity_id}&{field_id}={field_value}"
+                    cmd_to_id_map[cmd_key] = entity_id
             response = requests.post(
                 url=f"{self.webhook}/batch",
                 json={"cmd": commands, "halt": 0}
             ).json()
+
             result_data = response.get("result", {})
             result_errors = response.get("result_error", {})
+            
             for cmd_key, original_id in cmd_to_id_map.items():
                 if cmd_key in result_errors:
                     unrealized_ids.append(original_id)

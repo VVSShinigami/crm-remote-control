@@ -128,6 +128,32 @@ class ConsoleView:
             return False
             
         return save_txt == "Да"
+    
+
+    def ask_field_id(self) -> Optional[str]:
+        field_id = questionary.text(
+        message="Введите ID поля:",
+        style=self._style,
+        qmark="🔗"
+        ).ask()
+        return field_id.strip() if field_id else None
+
+
+    def _ask_field_until_valid(self) -> Optional[str]:
+        while True:
+            field = self.ask_field_id()
+            if isinstance(field, str) and field.strip():
+                return field.strip()
+            self.console.print("[error]Поле должно быть непустой строкой[/error]")
+
+
+    def ask_field_value(self) -> Optional[str]:
+        field_value = questionary.text(
+        message="Введите значение поля:",
+        style=self._style,
+        qmark="🔗"
+        ).ask()
+        return field_value.strip() if field_value else None
 
 
     def show_webhook_add_result(self, success: bool) -> None:
@@ -244,13 +270,6 @@ class ConsoleView:
         if report_path:
             self.console.print(f"[success]📊 Отчет сохранен: {report_path}[/success]")
 
-
-    # def show_current_settings(self, settings):
-    #     print(settings)
-
-
-    # def show_fail_settings(self):
-    #     print(f"Настройки приложения не заданы!")
 
     def show_current_settings(self, settings: Settings) -> None:
         table = Table(title="Текущие настройки", border_style="#217718")

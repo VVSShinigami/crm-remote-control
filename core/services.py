@@ -47,7 +47,7 @@ class CrmOperationService:
         self.file_parser = file_parser
         self.report_service = report_service
 
-    def execute_operation(self, bitrix_client, entity: str, method: str, file_path: str) -> dict:
+    def execute_operation(self, bitrix_client, entity: str, method: str, file_path: str, field_id: str = None, field_value: str = None) -> dict:
         ids = self.file_parser.read_file(file_path)
         if not ids:
             return {"success": False, "message": "Файл пуст или не найден"}
