@@ -1,6 +1,6 @@
 from typing import Optional
 from ui.console_view import ConsoleView
-from core.services import CrmOperationService, WebhookService
+from core.services import CrmOperationService, WebhookService, ReportService
 from core.entities import Settings
 from modules.bitrix.client import BitrixClient
 from modules.excelreport.report import ExcelReport
@@ -77,6 +77,5 @@ class OperationCommand:
             field_id=field_id,
             field_value=field_value
         )
-        # report = ExcelReport(realized_ids=None, unrealized_ids=None)
         self.view.show_operation_result(result)
         self.view.wait_for_enter()

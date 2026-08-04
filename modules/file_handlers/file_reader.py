@@ -8,16 +8,16 @@ import csv
 
 class FileParser:
     def read_file(self, file_path: str) -> list[int]:
+        if file_path[0] == '"':
+            file_path = file_path[1:-1].strip()
         if not self._file_exists(file_path):
             return []
-
         file_type = self._definition_file_type(file_path)
 
         if file_type == "text/plain":
             return self._read_txt(file_path)
         elif file_type and ("csv" in file_type or "spreadsheet" in file_type or "excel" in file_type):
             return self._read_xlsx(file_path) if "excel" in file_type or "spreadsheet" in file_type else self._read_csv(file_path)
-
         return []
 
     def _file_exists(self, file_path: str) -> bool:
