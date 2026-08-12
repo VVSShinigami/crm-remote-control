@@ -1,5 +1,8 @@
+from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, Border, Side
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 from openpyxl.drawing.image import Image
@@ -73,9 +76,12 @@ class ExcelReport:
             ws.column_dimensions[column_letter].width = col_max + 2
 
         try:
+            Path(output_path).parent.mkdir(parents=True, exist_ok=True)
             wb.save(output_path)
+            print(f"[ExcelReport] Сохранено: {output_path}")
             return True
-        except OSError:
+        except Exception as e:
+            print(f"[ExcelReport] ОШИБКА сохранения: {e}")
             return False
 
     def _create_pie_chart(self, total: int) -> io.BytesIO | None:

@@ -77,5 +77,11 @@ class OperationCommand:
             field_id=field_id,
             field_value=field_value
         )
-        self.view.show_operation_result(result)
+        # self.view.show_operation_result(result)
+        if result.get("report_path"):
+            self.view.console.print(f"[success]📊 Отчёт: {result['report_path']}[/success]")
+        else:
+            self.view.console.print("[warning]⚠️ Отчёт не создан (см. консоль)[/warning]")
+
+            self.view.wait_for_enter()
         self.view.wait_for_enter()

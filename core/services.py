@@ -98,14 +98,15 @@ class ReportService:
     def create_report(self, realized: list[int], unrealized: list[int]) -> str | None:
         if not getattr(self.settings, "report_enabled", True):
             return None
-
         filename = f"Отчет_{datetime.now().strftime('%d.%m.%Y_%H_%M_%S')}.xlsx"
-        output_path = str(Path(self.settings.report_path) / filename)
-
+        output_path = Path(self.settings.report_path) / filename
         report = ExcelReport(realized_ids=realized, unrealized_ids=unrealized)
-        if report.generate(output_path):
-            return output_path
-        return None
+        try:
+            success = report.generate(str(output_path))
+            return str(output_path) if success else None
+        except Exception as e:
+            print(f"[ReportService] ОШИБКА: {e}")
+            return None
 
 
 class SettingsService:
